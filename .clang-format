@@ -1,6 +1,6 @@
 Language: Cpp
 BasedOnStyle: LLVM
-AllowShortFunctionsOnASingleLine : None
+AllowShortFunctionsOnASingleLine: None
 AlwaysBreakTemplateDeclarations: Yes
 BraceWrapping:
   SplitEmptyFunction: false
@@ -9,3 +9,5 @@ BraceWrapping:
 PointerAlignment: Left
 SpaceAfterTemplateKeyword: false
 SpacesInContainerLiterals: false
+InsertNewlineAtEOF: true
+KeepEmptyLinesAtEOF: true

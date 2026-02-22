@@ -12,3 +12,4 @@ CFLModule::CFLModule(QWidget* parent)
 
 } // namespace NSFingerLayout
 } // namespace NSApplication
+

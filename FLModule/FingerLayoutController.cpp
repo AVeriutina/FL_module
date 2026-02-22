@@ -21,3 +21,4 @@ void CFingerLayoutController::connectButtons() {
 
 } // namespace NSFingerLayout
 } // namespace NSApplication
+

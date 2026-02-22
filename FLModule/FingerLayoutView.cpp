@@ -118,3 +118,4 @@ void CFingerLayoutView::resetButtonColor(CKeyPosition pos) {
 
 } // namespace NSFingerLayout
 } // namespace NSApplication
+

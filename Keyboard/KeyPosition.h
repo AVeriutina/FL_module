@@ -133,3 +133,4 @@ using CKeyPosition = CKeyPosEnum::CType;
 } // namespace NSApplication
 
 #endif // NSAPPLICATION_NSKEYBOARD_CKEYPOSITION_H
+

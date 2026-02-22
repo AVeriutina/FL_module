@@ -196,3 +196,4 @@ createCoordinatesKeyboardLayout() {
 } // namespace NSViewDetails
 } // namespace NSFingerLayout
 } // namespace NSApplication
+

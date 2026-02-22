@@ -138,3 +138,4 @@ bool CFinger::CStandardOrder::operator()(CFinger lhs, CFinger rhs) const {
 
 } // namespace NSKernel
 } // namespace NSApplication
+

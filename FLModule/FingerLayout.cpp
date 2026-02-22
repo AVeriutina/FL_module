@@ -120,3 +120,4 @@ CFingerLayout::CKeyPositionContainer CFingerLayout::getDefaultRightPinky() {
 
 } // namespace NSFingerLayout
 } // namespace NSApplication
+

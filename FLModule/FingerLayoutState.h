@@ -20,3 +20,4 @@ public:
 
 } // namespace NSFingerLayout
 } // namespace NSApplication
+

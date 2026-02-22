@@ -49,3 +49,4 @@ private:
 
 } // namespace NSFingerLayout
 } // namespace NSApplication
+
