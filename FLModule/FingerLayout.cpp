@@ -5,7 +5,9 @@
 namespace NSApplication {
 namespace NSFingerLayout {
 
-CFingerLayout::CFingerLayout() : Layout_(getDefaultLayout()) {
+CFingerLayout::CFingerLayout()
+    : Layout_(getDefaultLayout()), CurrentFinger_(getDefaultCurrentFinger()) {
+  FingerLayoutOutput_.set(CFingerLayoutState(Layout_, CurrentFinger_));
 }
 
 CFingerLayout CFingerLayout::getLayout() const {
@@ -21,13 +23,11 @@ CFingerLayout::CFinger CFingerLayout::find(CKeyPosition Position) const {
 }
 
 void CFingerLayout::changeCurrentFinger(CFinger new_finger) {
-  assert(new_finger.id() != EFingerEnum::Undefined);
   CurrentFinger_ = new_finger;
   FingerLayoutOutput_.set(CFingerLayoutState(Layout_, CurrentFinger_));
 }
 
 void CFingerLayout::changeButton(CKeyPosition button_for_change) {
-  assert(button_for_change != CKeyPosEnum::UNKN);
   for (auto& [_, buttons_for_finger] : Layout_) {
     if (!buttons_for_finger.contains(button_for_change)) {
       continue;
@@ -38,7 +38,16 @@ void CFingerLayout::changeButton(CKeyPosition button_for_change) {
     FingerLayoutOutput_.set(CFingerLayoutState(Layout_, CurrentFinger_));
     return;
   }
-  assert(false);
+}
+
+void CFingerLayout::resetLayout() {
+  Layout_ = getDefaultLayout();
+  FingerLayoutOutput_.set(CFingerLayoutState(Layout_, CurrentFinger_));
+}
+
+void CFingerLayout::sendLayout() {
+  // TODO integration
+  //  send layout to app
 }
 
 void CFingerLayout::subscribeToFingerLayout(CFingerLayoutObserver* observer) {
@@ -116,6 +125,10 @@ CFingerLayout::CKeyPositionContainer CFingerLayout::getDefaultRightPinky() {
           CKeyPosEnum::AC11, CKeyPosEnum::AB10, CKeyPosEnum::BKSP,
           CKeyPosEnum::BKSL, CKeyPosEnum::RTRN, CKeyPosEnum::RTSH,
           CKeyPosEnum::RCTL};
+}
+
+CFingerLayout::CFinger CFingerLayout::getDefaultCurrentFinger() {
+  return CFinger::LeftPinky();
 }
 
 } // namespace NSFingerLayout

@@ -19,8 +19,7 @@ class CFingerLayout {
   using CKeyPositionContainer = std::set<CKeyPosition>;
   using CLayoutContainer =
       std::map<CFinger, CKeyPositionContainer, CFinger::CStandardOrder>;
-  using CFingerLayoutObservable =
-      NSLibrary::CObservableData<CFingerLayoutState>;
+  using CFingerLayoutOutput = NSLibrary::CObservableData<CFingerLayoutState>;
   using CFingerLayoutObserver = NSLibrary::CObserver<CFingerLayoutState>;
 
 public:
@@ -31,8 +30,11 @@ public:
   CFinger find(CKeyPosition Position) const;
 
   // нужны только для view, возможно сделать protected?
+  // или разнести логику модели и layout?
   void changeCurrentFinger(CFinger NewFinger);
   void changeButton(CKeyPosition ButtonForChange);
+  void resetLayout();
+  void sendLayout();
 
   void subscribeToFingerLayout(CFingerLayoutObserver* Observer);
 
@@ -52,9 +54,11 @@ private:
   static CKeyPositionContainer getDefaultRightRing();
   static CKeyPositionContainer getDefaultRightPinky();
 
+  CFinger getDefaultCurrentFinger();
+
   CLayoutContainer Layout_;
   CFinger CurrentFinger_;
-  CFingerLayoutObservable FingerLayoutOutput_;
+  CFingerLayoutOutput FingerLayoutOutput_;
 };
 } // namespace NSFingerLayout
 } // namespace NSApplication

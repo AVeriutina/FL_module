@@ -12,6 +12,7 @@ class CFingerLayoutController : public QObject {
   Q_OBJECT
 
   using CKeyPosition = NSKeyboard::CKeyPosition;
+  using CFinger = NSKernel::CFinger;
 
 public:
   CFingerLayoutController(CFingerLayout& Model, CFingerLayoutView& View);
@@ -23,10 +24,12 @@ public:
   ~CFingerLayoutController() = default;
 
 private:
-  void connectButtons();
+  void connectKeyButtons();
+  void connectFingerButtons();
+  void connectActionButtons();
 
-  CFingerLayout& Model_;
-  CFingerLayoutView& View_;
+  CFingerLayout& FingerLayout_;
+  CFingerLayoutView& FingerLayoutView_;
 };
 
 } // namespace NSFingerLayout
