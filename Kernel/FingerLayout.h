@@ -1,4 +1,10 @@
-#pragma once
+#ifndef NSAPPLICATION_NSKERNEL_CFINGERLAYOUT_H
+#define NSAPPLICATION_NSKERNEL_CFINGERLAYOUT_H
+
+#include "Keyboard/KeyPosition.h"
+
+#include <map>
+#include <set>
 
 namespace NSApplication {
 namespace NSKernel {
@@ -77,6 +83,39 @@ private:
   EFinger Finger_ = EFingerEnum::Undefined;
 };
 
+class CFingerLayout {
+  using CKeyPosEnum = NSKeyboard::CKeyPosEnum;
+  using CKeyPosition = NSKeyboard::CKeyPosition;
+
+  using CKeyPositionContainer = std::set<CKeyPosition>;
+  using CLayoutContainer =
+      std::map<CFinger, CKeyPositionContainer, CFinger::CStandardOrder>;
+
+public:
+  CFingerLayout() = default;
+  static CFingerLayout getDefault();
+  CFinger find(CKeyPosition Position) const;
+
+private:
+  CFingerLayout(CLayoutContainer Layout);
+
+  static CLayoutContainer getDefaultLayout();
+
+  static CKeyPositionContainer getDefaultLeftThumb();
+  static CKeyPositionContainer getDefaultLeftIndex();
+  static CKeyPositionContainer getDefaultLeftMiddle();
+  static CKeyPositionContainer getDefaultLeftRing();
+  static CKeyPositionContainer getDefaultLeftPinky();
+  static CKeyPositionContainer getDefaultRightThumb();
+  static CKeyPositionContainer getDefaultRightIndex();
+  static CKeyPositionContainer getDefaultRightMiddle();
+  static CKeyPositionContainer getDefaultRightRing();
+  static CKeyPositionContainer getDefaultRightPinky();
+
+  CLayoutContainer Layout_;
+};
+
 } // namespace NSKernel
 } // namespace NSApplication
 
+#endif // NSAPPLICATION_NSKERNEL_CFINGERLAYOUT_H

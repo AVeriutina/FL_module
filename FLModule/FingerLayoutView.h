@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Finger.h"
 #include "FingerLayoutState.h"
+#include "Kernel/FingerLayout.h"
 #include "Keyboard/KeyPosition.h"
 #include "Library/Observer2/Observer.h"
 
@@ -9,11 +9,34 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QWidget>
+
 #include <map>
 #include <set>
+#include <vector>
 
 namespace NSApplication {
 namespace NSFingerLayout {
+
+struct CFingerPalette {
+  using CFinger = NSKernel::CFinger;
+  using CFingerColorMap = std::map<CFinger, QColor, CFinger::CStandardOrder>;
+
+  CFingerColorMap Fingers{
+      {CFinger::LeftPinky(), QColor("#F4B8C1")},
+      {CFinger::LeftRing(), QColor("#F9D4A0")},
+      {CFinger::LeftMiddle(), QColor("#FAF0A0")},
+      {CFinger::LeftIndex(), QColor("#B8EAB8")},
+      {CFinger::LeftThumb(), QColor("#A8D8EA")},
+      {CFinger::RightThumb(), QColor("#C3B8EA")},
+      {CFinger::RightIndex(), QColor("#B8D4EA")},
+      {CFinger::RightMiddle(), QColor("#A8EAD8")},
+      {CFinger::RightRing(), QColor("#D4EAA8")},
+      {CFinger::RightPinky(), QColor("#EAC8A8")},
+      {CFinger(), QColor("#d6d6d6")}, // Unassigned
+  };
+
+  QColor Default = QColor("#d6d6d6");
+};
 
 class CFingerLayoutView {
   using CFinger = NSKernel::CFinger;
@@ -31,9 +54,9 @@ class CFingerLayoutView {
       std::map<CFinger, QPushButton*, CFinger::CStandardOrder>;
 
 public:
-  explicit CFingerLayoutView(QWidget* parent);
+  explicit CFingerLayoutView(QMainWindow* window);
 
-  CViewObserver* getFingerLayoutInput();
+  CViewObserver* FingerLayoutInput();
 
   const CButtonsContainer& getButtonsContainer() const;
   const CFingersContainer& getFingersContainer() const;
@@ -42,22 +65,26 @@ public:
   QPushButton* getResetButton() const;
   QPushButton* getCancelButton() const;
 
-  void closeWindow();
-
 private:
+  void drawLayout(const CLayoutContainer& layout);
   void drawState(const CFingerLayoutState& State);
   void buildLayout();
+  int placeFingerGroup(const std::vector<CFinger>& fingers, int x, int y,
+                       const CFingerPalette::CFingerColorMap& colorMap);
   void buildFingerPanel();
   void updateFingerPanel(CFinger currentFinger);
   void buildActionButtons();
-
-  QMainWindow* Window_;
-  QWidget* CentralWidget_;
+  QPushButton* makeButton(const char* label, int x, int y, const QColor& bg);
 
   CFingerLayoutInput FingerLayoutInput_;
+
+  CFingerPalette Palette_;
+
   CButtonsContainer ButtonsContainer_;
   CFingersContainer FingersContainer_;
 
+  QMainWindow* Window_;
+  QWidget* CentralWidget_;
   QPushButton* OkButton_;
   QPushButton* ResetButton_;
   QPushButton* CancelButton_;

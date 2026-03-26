@@ -1,8 +1,9 @@
 #pragma once
 
-#include "FingerLayout.h"
+#include "FingerLayoutModule.h"
 #include "FingerLayoutView.h"
-#include "KeyPosition.h"
+#include "Keyboard/KeyPosition.h"
+
 #include <QObject>
 
 namespace NSApplication {
@@ -15,7 +16,7 @@ class CFingerLayoutController : public QObject {
   using CFinger = NSKernel::CFinger;
 
 public:
-  CFingerLayoutController(CFingerLayout& Model, CFingerLayoutView& View);
+  CFingerLayoutController(CFingerLayoutModule* Model, CFingerLayoutView* View);
 
   CFingerLayoutController(const CFingerLayoutController&) = delete;
   CFingerLayoutController(CFingerLayoutController&&) = delete;
@@ -28,8 +29,11 @@ private:
   void connectFingerButtons();
   void connectActionButtons();
 
-  CFingerLayout& FingerLayout_;
-  CFingerLayoutView& FingerLayoutView_;
+  void accept();
+  void reset();
+
+  CFingerLayoutModule* FingerLayout_;
+  CFingerLayoutView* FingerLayoutView_;
 };
 
 } // namespace NSFingerLayout

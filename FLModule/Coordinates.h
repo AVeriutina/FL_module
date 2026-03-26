@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Keyboard/KeyPosition.h"
+
 #include <QRect>
+
 #include <unordered_map>
 
 namespace NSApplication {

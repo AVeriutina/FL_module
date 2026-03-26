@@ -1,18 +1,24 @@
 #pragma once
 
-#include "FingerLayout.h"
 #include "FingerLayoutController.h"
+#include "FingerLayoutModule.h"
 #include "FingerLayoutView.h"
+
+#include <QMainWindow>
+
+#include <memory>
 
 namespace NSApplication {
 namespace NSFingerLayout {
 
 class CFLModule {
 public:
-  CFLModule(QWidget* parent);
+  CFLModule();
+  ~CFLModule() = default;
 
 private:
-  CFingerLayout FingerLayout_;
+  std::unique_ptr<QMainWindow> MainWindow_;
+  CFingerLayoutModule FingerLayout_;
   CFingerLayoutView FingerLayoutView_;
   CFingerLayoutController FingerLayoutController_;
 };

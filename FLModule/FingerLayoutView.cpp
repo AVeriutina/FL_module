@@ -1,8 +1,10 @@
 #include "FingerLayoutView.h"
 #include "Coordinates.h"
 #include "StyleSheet.h"
-#include <cassert>
+
 #include <qcolor.h>
+
+#include <cassert>
 
 namespace NSApplication {
 namespace NSFingerLayout {
@@ -12,20 +14,6 @@ namespace {
 using CFinger = NSKernel::CFinger;
 using CKeyPosEnum = NSKeyboard::CKeyPosEnum;
 using namespace NSCoordinates::LayoutConstants;
-
-std::map<CFinger, QColor, CFinger::CStandardOrder> defaultFingerColors() {
-  return {{CFinger::LeftPinky(), QColor("#F4B8C1")},
-          {CFinger::LeftRing(), QColor("#F9D4A0")},
-          {CFinger::LeftMiddle(), QColor("#FAF0A0")},
-          {CFinger::LeftIndex(), QColor("#B8EAB8")},
-          {CFinger::LeftThumb(), QColor("#A8D8EA")},
-          {CFinger::RightThumb(), QColor("#C3B8EA")},
-          {CFinger::RightIndex(), QColor("#B8D4EA")},
-          {CFinger::RightMiddle(), QColor("#A8EAD8")},
-          {CFinger::RightRing(), QColor("#D4EAA8")},
-          {CFinger::RightPinky(), QColor("#EAC8A8")},
-          {CFinger(), QColor("#d6d6d6")}};
-}
 
 std::unordered_map<CKeyPosEnum::CType, const char*> keyLabels() {
   return {{CKeyPosEnum::BKSP, "Back"},
@@ -107,11 +95,12 @@ const std::vector<CFinger>& rightFingers() {
 
 } // anonymous namespace
 
-CFingerLayoutView::CFingerLayoutView(QWidget* parent)
+CFingerLayoutView::CFingerLayoutView(QMainWindow* window)
     : FingerLayoutInput_(
           [this](const CFingerLayoutState& State) { drawState(State); }),
-      Window_(new QMainWindow(parent)), CentralWidget_(new QWidget(Window_)) {
-
+      Window_(window), CentralWidget_(new QWidget(Window_)) {
+  assert(Window_);
+  assert(CentralWidget_);
   Window_->setWindowTitle("Fingers Layout");
   Window_->setCentralWidget(CentralWidget_);
 
@@ -132,7 +121,7 @@ CFingerLayoutView::CFingerLayoutView(QWidget* parent)
   Window_->show();
 }
 
-CFingerLayoutView::CViewObserver* CFingerLayoutView::getFingerLayoutInput() {
+CFingerLayoutView::CViewObserver* CFingerLayoutView::FingerLayoutInput() {
   return &FingerLayoutInput_;
 }
 
@@ -156,17 +145,10 @@ QPushButton* CFingerLayoutView::getCancelButton() const {
   return CancelButton_;
 }
 
-void CFingerLayoutView::closeWindow() {
-  Window_->close();
-}
-
-void CFingerLayoutView::drawState(const CFingerLayoutState& State) {
-  const auto colorMap = defaultFingerColors();
-  const QColor unassigned("#d6d6d6");
-
-  for (const auto& [finger, keys] : State.layout) {
-    auto colorIt = colorMap.find(finger);
-    if (colorIt == colorMap.end())
+void CFingerLayoutView::drawLayout(const CLayoutContainer& layout) {
+  for (const auto& [finger, keys] : layout) {
+    auto colorIt = Palette_.Fingers.find(finger);
+    if (colorIt == Palette_.Fingers.end())
       continue;
     for (CKeyPosition pos : keys) {
       auto btnIt = ButtonsContainer_.find(pos);
@@ -175,14 +157,16 @@ void CFingerLayoutView::drawState(const CFingerLayoutState& State) {
             NSViewDetails::keyButtonStyle(colorIt->second).toStyleSheet());
     }
   }
+}
 
+void CFingerLayoutView::drawState(const CFingerLayoutState& State) {
+  drawLayout(State.layout);
   updateFingerPanel(State.current_finger);
 }
 
 void CFingerLayoutView::buildLayout() {
   const auto coordMap = NSCoordinates::createKeyboardLayout();
   const auto labelMap = keyLabels();
-  const QColor defaultColor("#d6d6d6");
 
   for (const auto& [keyPos, rect] : coordMap) {
     auto* btn = new QPushButton(CentralWidget_);
@@ -197,42 +181,41 @@ void CFingerLayoutView::buildLayout() {
       btn->setDisabled(true);
 
     btn->setStyleSheet(
-        NSViewDetails::keyButtonStyle(defaultColor).toStyleSheet());
+        NSViewDetails::keyButtonStyle(Palette_.Default).toStyleSheet());
     ButtonsContainer_[keyPos] = btn;
   }
 }
 
+int CFingerLayoutView::placeFingerGroup(
+    const std::vector<CFinger>& fingers, int x, int y,
+    const CFingerPalette::CFingerColorMap& colorMap) {
+  using namespace NSCoordinates::LayoutConstants;
+  for (const CFinger& f : fingers) {
+    const QColor color = colorMap.count(f) ? colorMap.at(f) : Palette_.Default;
+    auto* btn =
+        new QPushButton(QString::fromUtf8(fingerLabel(f)), CentralWidget_);
+    assert(btn);
+    btn->setGeometry(x, y, FINGER_BTN_W, FINGER_BTN_H);
+    btn->setStyleSheet(
+        NSViewDetails::fingerButtonStyle(color, false).toStyleSheet());
+    FingersContainer_[f] = btn;
+    x += FINGER_BTN_W;
+  }
+  return x;
+}
+
 void CFingerLayoutView::buildFingerPanel() {
   using namespace NSCoordinates::LayoutConstants;
-
-  const auto colorMap = defaultFingerColors();
   const int y = fingerBtnTop(FINGER_BTN_H);
 
-  auto placeFingerGroup = [&](const std::vector<CFinger>& fingers, int x) {
-    for (const CFinger& f : fingers) {
-      const QColor color =
-          colorMap.count(f) ? colorMap.at(f) : QColor("#d6d6d6");
-      auto* btn =
-          new QPushButton(QString::fromUtf8(fingerLabel(f)), CentralWidget_);
-      btn->setGeometry(x, y, FINGER_BTN_W, FINGER_BTN_H);
-      btn->setStyleSheet(
-          NSViewDetails::fingerButtonStyle(color, false).toStyleSheet());
-      FingersContainer_[f] = btn;
-      x += FINGER_BTN_W;
-    }
-    return x;
-  };
-
   int x = fingerPanelStartX();
-  x = placeFingerGroup(leftFingers(), x);
+  x = placeFingerGroup(leftFingers(), x, y, Palette_.Fingers);
   x += HAND_GAP;
-  placeFingerGroup(rightFingers(), x);
+  placeFingerGroup(rightFingers(), x, y, Palette_.Fingers);
 }
 
 void CFingerLayoutView::updateFingerPanel(CFinger currentFinger) {
   using namespace NSCoordinates::LayoutConstants;
-
-  const auto colorMap = defaultFingerColors();
 
   auto updateFingerGroup = [&](const std::vector<CFinger>& fingers, int x) {
     for (const CFinger& f : fingers) {
@@ -244,7 +227,7 @@ void CFingerLayoutView::updateFingerPanel(CFinger currentFinger) {
       const bool isCurrent = (f.id() == currentFinger.id());
       const int h = isCurrent ? FINGER_BTN_H_SEL : FINGER_BTN_H;
       const QColor color =
-          colorMap.count(f) ? colorMap.at(f) : QColor("#d6d6d6");
+          Palette_.Fingers.count(f) ? Palette_.Fingers.at(f) : Palette_.Default;
 
       it->second->setGeometry(x, fingerBtnTop(h), FINGER_BTN_W, h);
       it->second->setStyleSheet(
@@ -270,16 +253,19 @@ void CFingerLayoutView::buildActionButtons() {
   const int resetX = cancelX - ACTION_BTN_GAP - ACTION_BTN_W;
   const int okX = resetX - ACTION_BTN_GAP - ACTION_BTN_W;
 
-  auto makeButton = [&](const char* label, int x, const QColor& bg) {
-    auto* btn = new QPushButton(label, CentralWidget_);
-    btn->setGeometry(x, y, ACTION_BTN_W, ACTION_BTN_H);
-    btn->setStyleSheet(NSViewDetails::actionButtonStyle(bg).toStyleSheet());
-    return btn;
-  };
+  OkButton_ = makeButton("OK", okX, y, Palette_.Default);
+  ResetButton_ = makeButton("Reset", resetX, y, Palette_.Default);
+  CancelButton_ = makeButton("Cancel", cancelX, y, Palette_.Default);
+}
 
-  OkButton_ = makeButton("OK", okX, QColor("#d6d6d6"));
-  ResetButton_ = makeButton("Reset", resetX, QColor("#d6d6d6"));
-  CancelButton_ = makeButton("Cancel", cancelX, QColor("#d6d6d6"));
+QPushButton* CFingerLayoutView::makeButton(const char* label, int x, int y,
+                                           const QColor& bg) {
+  using namespace NSCoordinates::LayoutConstants;
+  auto* btn = new QPushButton(label, CentralWidget_);
+  assert(btn);
+  btn->setGeometry(x, y, ACTION_BTN_W, ACTION_BTN_H);
+  btn->setStyleSheet(NSViewDetails::actionButtonStyle(bg).toStyleSheet());
+  return btn;
 }
 
 } // namespace NSFingerLayout

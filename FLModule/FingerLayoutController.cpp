@@ -1,46 +1,51 @@
 #include "FingerLayoutController.h"
 
+#include <cassert>
+
 namespace NSApplication {
 namespace NSFingerLayout {
 
-CFingerLayoutController::CFingerLayoutController(CFingerLayout& Model,
-                                                 CFingerLayoutView& View)
+CFingerLayoutController::CFingerLayoutController(CFingerLayoutModule* Model,
+                                                 CFingerLayoutView* View)
     : FingerLayout_(Model), FingerLayoutView_(View) {
+  assert(FingerLayout_);
+  assert(FingerLayoutView_);
   connectKeyButtons();
   connectFingerButtons();
   connectActionButtons();
 }
 
 void CFingerLayoutController::connectKeyButtons() {
-  const auto& buttons = FingerLayoutView_.getButtonsContainer();
+  const auto& buttons = FingerLayoutView_->getButtonsContainer();
   for (auto& [keyPos, button] : buttons) {
     connect(button, &QPushButton::clicked, this,
-            [this, keyPos]() { FingerLayout_.changeButton(keyPos); });
+            [this, keyPos]() { FingerLayout_->changeButton(keyPos); });
   }
 }
 
 void CFingerLayoutController::connectFingerButtons() {
-  const auto& fingers = FingerLayoutView_.getFingersContainer();
+  const auto& fingers = FingerLayoutView_->getFingersContainer();
   for (auto& [finger, button] : fingers) {
     connect(button, &QPushButton::clicked, this,
-            [this, finger]() { FingerLayout_.changeCurrentFinger(finger); });
+            [this, finger]() { FingerLayout_->changeCurrentFinger(finger); });
   }
 }
 
 void CFingerLayoutController::connectActionButtons() {
-  connect(FingerLayoutView_.getOkButton(), &QPushButton::clicked, this,
-          [this]() {
-            FingerLayout_.sendLayout();
-            FingerLayoutView_.closeWindow();
-          });
+  connect(FingerLayoutView_->getOkButton(), &QPushButton::clicked, this,
+          &CFingerLayoutController::accept);
 
-  connect(FingerLayoutView_.getResetButton(), &QPushButton::clicked, this,
-          [this]() { FingerLayout_.resetLayout(); });
+  connect(FingerLayoutView_->getResetButton(), &QPushButton::clicked, this,
+          &CFingerLayoutController::reset);
+}
 
-  connect(FingerLayoutView_.getCancelButton(), &QPushButton::clicked, this,
-          [this]() { FingerLayoutView_.closeWindow(); });
+void CFingerLayoutController::accept() {
+  FingerLayout_->sendLayout();
+}
+
+void CFingerLayoutController::reset() {
+  FingerLayout_->resetLayout();
 }
 
 } // namespace NSFingerLayout
 } // namespace NSApplication
-
