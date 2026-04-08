@@ -15,7 +15,7 @@
 #include <vector>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 
 struct CFingerPalette {
   using CFinger = NSKernel::CFinger;
@@ -90,5 +90,5 @@ private:
   QPushButton* CancelButton_;
 };
 
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication

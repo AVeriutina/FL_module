@@ -5,7 +5,7 @@
 int main(int argc, char** argv) {
   QApplication qt_runtime(argc, argv);
   try {
-    NSApplication::NSFingerLayout::CFLModule app;
+    NSApplication::NSFingers::CFLModule app;
     return qt_runtime.exec();
   } catch (...) {
     // Except::React();

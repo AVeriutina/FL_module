@@ -7,7 +7,7 @@
 #include <set>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 
 struct CFingerLayoutState {
   using CFinger = NSKernel::CFinger;
@@ -18,6 +18,6 @@ struct CFingerLayoutState {
   CFinger current_finger;
 };
 
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication
 

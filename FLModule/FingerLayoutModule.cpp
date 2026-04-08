@@ -31,7 +31,7 @@ CLayoutContainer getDefaultLayout() {
 } // namespace
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 
 CFingerLayoutModule::CFingerLayoutModule()
     : Layout_(getDefaultLayout()), InitialLayout_(Layout_),
@@ -73,6 +73,6 @@ void CFingerLayoutModule::subscribeToFingerLayout(
   FingerLayoutOutput_.subscribe(observer);
 }
 
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication
 

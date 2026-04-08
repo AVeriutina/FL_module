@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 namespace NSCoordinates {
 
 using CKeyPosEnum = NSKeyboard::CKeyPosEnum;
@@ -219,5 +219,5 @@ inline std::unordered_map<CKeyPosEnum::CType, QRect> createKeyboardLayout() {
 }
 
 } // namespace NSCoordinates
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication

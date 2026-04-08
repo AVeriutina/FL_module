@@ -4,7 +4,7 @@
 #include <QString>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 namespace NSViewDetails {
 
 struct CButtonStyle {
@@ -71,6 +71,6 @@ inline CButtonStyle actionButtonStyle(const QColor& bg) {
 }
 
 } // namespace NSViewDetails
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication
 

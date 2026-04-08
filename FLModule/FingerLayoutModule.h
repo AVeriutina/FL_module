@@ -9,7 +9,7 @@
 #include <set>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 
 class CFingerLayoutModule {
   using CFinger = NSKernel::CFinger;
@@ -36,6 +36,6 @@ private:
   CFinger CurrentFinger_;
   CFingerLayoutOutput FingerLayoutOutput_;
 };
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication
 

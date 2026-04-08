@@ -3,7 +3,7 @@
 #include <cassert>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 
 CFingerLayoutController::CFingerLayoutController(CFingerLayoutModule* Model,
                                                  CFingerLayoutView* View)
@@ -47,5 +47,5 @@ void CFingerLayoutController::reset() {
   FingerLayout_->resetLayout();
 }
 
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication

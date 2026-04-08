@@ -3,7 +3,7 @@
 #include <QPushButton>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 
 CFLModule::CFLModule()
     : MainWindow_(std::make_unique<QMainWindow>()), FingerLayout_(),
@@ -14,6 +14,6 @@ CFLModule::CFLModule()
                    MainWindow_.get(), &QMainWindow::close);
 }
 
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication
 

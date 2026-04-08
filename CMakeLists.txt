@@ -38,3 +38,24 @@ add_executable(
 
 target_link_libraries(FL_module Qt5::Widgets Qt5::Gui)
 
+# Tests
+find_package(Qt5 REQUIRED COMPONENTS Test)
+
+add_executable(FL_module_tests
+    Tests/TestFingerLayoutModule.cpp
+    FLModule/FingerLayoutModule.cpp
+    Kernel/FingerLayout.cpp
+)
+
+target_include_directories(FL_module_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/FLModule
+    ${CMAKE_CURRENT_SOURCE_DIR}/Kernel
+    ${CMAKE_CURRENT_SOURCE_DIR}/Keyboard
+    ${CMAKE_CURRENT_SOURCE_DIR}/Library
+)
+
+target_link_libraries(FL_module_tests Qt5::Test)
+
+enable_testing()
+add_test(NAME FL_module_tests COMMAND FL_module_tests)

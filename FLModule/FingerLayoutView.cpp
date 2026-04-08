@@ -7,7 +7,7 @@
 #include <cassert>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 
 namespace {
 
@@ -75,9 +75,6 @@ int fingerPanelStartX() {
 int actionRowY() {
   return fingerPanelBottom() + ACTION_ROW_OFFSET;
 }
-
-// ── Порядок пальцев
-// ───────────────────────────────────────────────────────────
 
 const std::vector<CFinger>& leftFingers() {
   static const std::vector<CFinger> fingers = {
@@ -192,8 +189,7 @@ int CFingerLayoutView::placeFingerGroup(
   using namespace NSCoordinates::LayoutConstants;
   for (const CFinger& f : fingers) {
     const QColor color = colorMap.count(f) ? colorMap.at(f) : Palette_.Default;
-    auto* btn =
-        new QPushButton(QString::fromUtf8(fingerLabel(f)), CentralWidget_);
+    auto* btn = new QPushButton(CentralWidget_);
     assert(btn);
     btn->setGeometry(x, y, FINGER_BTN_W, FINGER_BTN_H);
     btn->setStyleSheet(
@@ -268,5 +264,5 @@ QPushButton* CFingerLayoutView::makeButton(const char* label, int x, int y,
   return btn;
 }
 
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication

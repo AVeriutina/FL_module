@@ -7,7 +7,7 @@
 #include <QObject>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 
 class CFingerLayoutController : public QObject {
   Q_OBJECT
@@ -36,6 +36,6 @@ private:
   CFingerLayoutView* FingerLayoutView_;
 };
 
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication
 

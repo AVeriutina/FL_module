@@ -9,7 +9,7 @@
 #include <memory>
 
 namespace NSApplication {
-namespace NSFingerLayout {
+namespace NSFingers {
 
 class CFLModule {
 public:
@@ -22,6 +22,6 @@ private:
   CFingerLayoutView FingerLayoutView_;
   CFingerLayoutController FingerLayoutController_;
 };
-} // namespace NSFingerLayout
+} // namespace NSFingers
 } // namespace NSApplication
 
