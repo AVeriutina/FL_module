@@ -140,4 +140,4 @@ void FingerLayoutModuleTest::testObserverNotifiedOnEachStateChange() {
 }
 
 QTEST_GUILESS_MAIN(FingerLayoutModuleTest)
-#include "tst_fingerlayoutmodule.moc"
+#include "TestFingerLayoutModule.moc"

@@ -1,4 +1,5 @@
 #include "FingerLayoutModule.h"
+#include "KeyboardScheme.h"
 
 #include <cassert>
 #include <limits>
@@ -17,7 +18,10 @@ CLayoutContainer getDefaultLayout() {
   const auto kernelLayout =
       NSApplication::NSKernel::CFingerLayout::getDefault();
   CLayoutContainer result;
-  result[CFinger()] = {};
+  // TODO добавить в Keyboard (NSKeyboard::CKeyPosition /
+  // CFingerLayout::getDefault)
+  result[CFinger().LeftPinky()] = {
+      NSApplication::NSFingers::CKeyboardScheme::kISO102Key};
   for (CKeyPosition pos = 0;; ++pos) {
     const CFinger finger = kernelLayout.find(pos);
     if (finger.id() != CFinger::EFingerEnum::Undefined)
@@ -36,12 +40,14 @@ namespace NSFingers {
 CFingerLayoutModule::CFingerLayoutModule()
     : Layout_(getDefaultLayout()), InitialLayout_(Layout_),
       CurrentFinger_(CFinger::LeftPinky()) {
-  FingerLayoutOutput_.set(CFingerLayoutState(Layout_, CurrentFinger_));
+  FingerLayoutOutput_.set(
+      CFingerLayoutState{Layout_, CurrentFinger_, CurrentKeyboardType_});
 }
 
 void CFingerLayoutModule::changeCurrentFinger(CFinger new_finger) {
   CurrentFinger_ = new_finger;
-  FingerLayoutOutput_.set(CFingerLayoutState(Layout_, CurrentFinger_));
+  FingerLayoutOutput_.set(
+      CFingerLayoutState{Layout_, CurrentFinger_, CurrentKeyboardType_});
 }
 
 void CFingerLayoutModule::changeButton(CKeyPosition button_for_change) {
@@ -52,19 +58,27 @@ void CFingerLayoutModule::changeButton(CKeyPosition button_for_change) {
     buttons_for_finger.erase(button_for_change);
     Layout_[CurrentFinger_].insert(button_for_change);
 
-    FingerLayoutOutput_.set(CFingerLayoutState(Layout_, CurrentFinger_));
+    FingerLayoutOutput_.set(
+        CFingerLayoutState{Layout_, CurrentFinger_, CurrentKeyboardType_});
     return;
   }
 }
 
 void CFingerLayoutModule::resetLayout() {
   Layout_ = InitialLayout_;
-  FingerLayoutOutput_.set(CFingerLayoutState(Layout_, CurrentFinger_));
+  FingerLayoutOutput_.set(
+      CFingerLayoutState{Layout_, CurrentFinger_, CurrentKeyboardType_});
 }
 
 void CFingerLayoutModule::sendLayout() {
   // TODO integration
   //  send layout to app
+}
+
+void CFingerLayoutModule::setKeyboardType(KeyboardType type) {
+  CurrentKeyboardType_ = type;
+  FingerLayoutOutput_.set(
+      CFingerLayoutState{Layout_, CurrentFinger_, CurrentKeyboardType_});
 }
 
 void CFingerLayoutModule::subscribeToFingerLayout(
@@ -75,4 +89,3 @@ void CFingerLayoutModule::subscribeToFingerLayout(
 
 } // namespace NSFingers
 } // namespace NSApplication
-

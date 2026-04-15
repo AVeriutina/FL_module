@@ -1,22 +1,28 @@
 #pragma once
 
 #include "FingerLayoutModule.h"
-#include "FingerLayoutView.h"
+#include "FingerLayoutState.h"
 #include "Keyboard/KeyPosition.h"
-
-#include <QObject>
 
 namespace NSApplication {
 namespace NSFingers {
 
-class CFingerLayoutController : public QObject {
-  Q_OBJECT
-
+class CFingerLayoutController {
   using CKeyPosition = NSKeyboard::CKeyPosition;
   using CFinger = NSKernel::CFinger;
 
+  using CKeyPressInput = NSLibrary::CColdInput<CKeyPosition>;
+  using CFingerInput = NSLibrary::CColdInput<CFinger>;
+  using CKeyboardTypeInput = NSLibrary::CColdInput<KeyboardType>;
+  using CActionInput = NSLibrary::CColdInput<EFingerLayoutAction>;
+
+  using CKeyPressObserver = NSLibrary::CObserver<CKeyPosition>;
+  using CFingerObserver = NSLibrary::CObserver<CFinger>;
+  using CKeyboardTypeObserver = NSLibrary::CObserver<KeyboardType>;
+  using CActionObserver = NSLibrary::CObserver<EFingerLayoutAction>;
+
 public:
-  CFingerLayoutController(CFingerLayoutModule* Model, CFingerLayoutView* View);
+  explicit CFingerLayoutController(CFingerLayoutModule* Model);
 
   CFingerLayoutController(const CFingerLayoutController&) = delete;
   CFingerLayoutController(CFingerLayoutController&&) = delete;
@@ -24,18 +30,20 @@ public:
   CFingerLayoutController& operator=(CFingerLayoutController&&) = delete;
   ~CFingerLayoutController() = default;
 
-private:
-  void connectKeyButtons();
-  void connectFingerButtons();
-  void connectActionButtons();
+  CKeyPressObserver* keyPressInput();
+  CFingerObserver* fingerChangeInput();
+  CKeyboardTypeObserver* keyboardTypeInput();
+  CActionObserver* actionInput();
 
-  void accept();
-  void reset();
+private:
+  void handleAction(EFingerLayoutAction action);
 
   CFingerLayoutModule* FingerLayout_;
-  CFingerLayoutView* FingerLayoutView_;
+  CKeyPressInput KeyPressInput_;
+  CFingerInput FingerInput_;
+  CKeyboardTypeInput KeyboardTypeInput_;
+  CActionInput ActionInput_;
 };
 
 } // namespace NSFingers
 } // namespace NSApplication
-

@@ -9,24 +9,26 @@ namespace NSViewDetails {
 
 struct CButtonStyle {
   QColor background;
-  QColor border = QColor("#888888");
+  QColor border = QColor(136, 136, 136);
   int borderWidth = 1;
   int borderRadius = 4;
   int fontSize = 16;
   bool bold = false;
+  QColor textColor = QColor(40, 40, 40);
 
   QString toStyleSheet() const {
-
     return QString("QPushButton {"
                    "  background-color: %1;"
-                   "  border: %2px solid %3;"
-                   "  border-radius: %4px;"
-                   "  font-size: %5px;"
-                   "  font-weight: %6;"
+                   "  color: %2;"
+                   "  border: %3px solid %4;"
+                   "  border-radius: %5px;"
+                   "  font-size: %6px;"
+                   "  font-weight: %7;"
                    "}"
-                   "QPushButton:hover   { background-color: %7; }"
-                   "QPushButton:pressed { background-color: %8; }")
+                   "QPushButton:hover   { background-color: %8; }"
+                   "QPushButton:pressed { background-color: %9; }")
         .arg(background.name())
+        .arg(textColor.name())
         .arg(borderWidth)
         .arg(border.name())
         .arg(borderRadius)
@@ -40,7 +42,7 @@ struct CButtonStyle {
 inline CButtonStyle keyButtonStyle(const QColor& bg) {
   return CButtonStyle{
       .background = bg,
-      .border = QColor("#888888"),
+      .border = QColor(136, 136, 136),
       .borderWidth = 1,
       .borderRadius = 4,
       .fontSize = 22,
@@ -48,21 +50,50 @@ inline CButtonStyle keyButtonStyle(const QColor& bg) {
   };
 }
 
-inline CButtonStyle fingerButtonStyle(const QColor& bg, bool isCurrent) {
+inline CButtonStyle fingerButtonStyle(const QColor& bg, const QColor& border,
+                                      int borderWidth, bool bold) {
   return CButtonStyle{
       .background = bg,
-      .border = isCurrent ? QColor("#222222") : QColor("#888888"),
-      .borderWidth = isCurrent ? 2 : 1,
+      .border = border,
+      .borderWidth = borderWidth,
       .borderRadius = 0,
       .fontSize = 18,
-      .bold = isCurrent,
+      .bold = bold,
   };
 }
 
-inline CButtonStyle actionButtonStyle(const QColor& bg) {
+inline CButtonStyle activeLayoutToggleStyle(const QColor& bg,
+                                            const QColor& border,
+                                            const QColor& text) {
   return CButtonStyle{
       .background = bg,
-      .border = QColor("#999999"),
+      .border = border,
+      .borderWidth = 2,
+      .borderRadius = 4,
+      .fontSize = 15,
+      .bold = true,
+      .textColor = text,
+  };
+}
+
+inline CButtonStyle inactiveLayoutToggleStyle(const QColor& bg,
+                                              const QColor& border,
+                                              const QColor& text) {
+  return CButtonStyle{
+      .background = bg,
+      .border = border,
+      .borderWidth = 1,
+      .borderRadius = 4,
+      .fontSize = 15,
+      .bold = false,
+      .textColor = text,
+  };
+}
+
+inline CButtonStyle actionButtonStyle(const QColor& bg, const QColor& border) {
+  return CButtonStyle{
+      .background = bg,
+      .border = border,
       .borderWidth = 1,
       .borderRadius = 6,
       .fontSize = 16,
@@ -73,4 +104,3 @@ inline CButtonStyle actionButtonStyle(const QColor& bg) {
 } // namespace NSViewDetails
 } // namespace NSFingers
 } // namespace NSApplication
-
